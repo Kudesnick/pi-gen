@@ -63,10 +63,14 @@ EOF
 			popd > /dev/null
 			log "End ${SUB_STAGE_DIR}/${i}-patches"
 		fi
-		if [ -x ${i}-run.sh ]; then
-			log "Begin ${SUB_STAGE_DIR}/${i}-run.sh"
-			./${i}-run.sh
-			log "End ${SUB_STAGE_DIR}/${i}-run.sh"
+		if [ -f ${i}-run.sh ]; then
+			if [ -x ${i}-run.sh ]; then
+				log "Begin ${SUB_STAGE_DIR}/${i}-run.sh"
+				./${i}-run.sh
+				log "End ${SUB_STAGE_DIR}/${i}-run.sh"
+			else
+				log "Warning: disallow executing ${SUB_STAGE_DIR}/${i}-run.sh"
+			fi
 		fi
 		if [ -f ${i}-run-chroot.sh ]; then
 			log "Begin ${SUB_STAGE_DIR}/${i}-run-chroot.sh"
@@ -97,10 +101,14 @@ run_stage(){
 				rm -rf "${ROOTFS_DIR}"
 			fi
 		fi
-		if [ -x prerun.sh ]; then
-			log "Begin ${STAGE_DIR}/prerun.sh"
-			./prerun.sh
-			log "End ${STAGE_DIR}/prerun.sh"
+		if [ -f prerun.sh ]; then
+			if [ -x prerun.sh ]; then
+				log "Begin ${STAGE_DIR}/prerun.sh"
+				./prerun.sh
+				log "End ${STAGE_DIR}/prerun.sh"
+			else
+				log "Warning: disallow executing ${STAGE_DIR}/prerun.sh"
+			fi
 		fi
 		for SUB_STAGE_DIR in "${STAGE_DIR}"/*; do
 			if [ -d "${SUB_STAGE_DIR}" ] &&
@@ -261,11 +269,15 @@ for EXPORT_DIR in ${EXPORT_DIRS}; do
 	fi
 done
 
-if [ -x ${BASE_DIR}/postrun.sh ]; then
-	log "Begin postrun.sh"
-	cd "${BASE_DIR}"
-	./postrun.sh
-	log "End postrun.sh"
+if [ -f ${BASE_DIR}/postrun.sh ]; then
+	if [ -x ${BASE_DIR}/postrun.sh ]; then
+		log "Begin postrun.sh"
+		cd "${BASE_DIR}"
+		./postrun.sh
+		log "End postrun.sh"
+	else
+		log "Warning: disallow executing postrun.sh"
+	fi
 fi
 
 log "End ${BASE_DIR}"
