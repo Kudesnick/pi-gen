@@ -3,7 +3,7 @@
 on_chroot << EOF
 
 systemctl enable bluetooth.service
-usermod -G bluetooth -a pi
+usermod -G bluetooth -a ${FIRST_USER_NAME}
 
 EOF
 
