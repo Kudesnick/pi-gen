@@ -64,13 +64,12 @@ EOF
 			log "End ${SUB_STAGE_DIR}/${i}-patches"
 		fi
 		if [ -f ${i}-run.sh ]; then
-			if [ -x ${i}-run.sh ]; then
-				log "Begin ${SUB_STAGE_DIR}/${i}-run.sh"
-				./${i}-run.sh
-				log "End ${SUB_STAGE_DIR}/${i}-run.sh"
-			else
-				log "Warning: disallow executing ${SUB_STAGE_DIR}/${i}-run.sh"
+			if [ ! -x ${i}-run.sh ]; then
+				chmod 755 ${i}-run.sh
 			fi
+			log "Begin ${SUB_STAGE_DIR}/${i}-run.sh"
+			./${i}-run.sh
+			log "End ${SUB_STAGE_DIR}/${i}-run.sh"
 		fi
 		if [ -f ${i}-run-chroot.sh ]; then
 			log "Begin ${SUB_STAGE_DIR}/${i}-run-chroot.sh"
