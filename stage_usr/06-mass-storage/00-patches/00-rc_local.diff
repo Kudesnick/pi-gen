@@ -1,0 +1,9 @@
+--- stage_user.orig/rootfs/etc/rc.local
++++ stage_user/rootfs/etc/rc.local
+@@ -17,4 +17,6 @@ if [ "$_IP" ]; then
+   printf "My IP address is %s\n" "$_IP"
+ fi
+ 
++/sbin/modprobe g_acm_ms file=/piusb.bin stall=0 ro=0 removable=1
++
+ exit 0
