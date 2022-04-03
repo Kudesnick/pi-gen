@@ -113,7 +113,7 @@ run_stage(){
 		fi
 	fi
 
-	if [ ! -f SKIP_IMAGES ]; then
+	if [ ! -f SKIP_IMAGES ] && [ ! -z "${SKIP_IMAGE_LIST##* ${STAGE} *}" ]; then
 		if [ -f "${STAGE_DIR}/EXPORT_IMAGE" ]; then
 			EXPORT_DIRS="${EXPORT_DIRS} ${STAGE_DIR}"
 		fi
@@ -266,11 +266,19 @@ export NOOBS_NAME
 export NOOBS_DESCRIPTION
 export EXPORT_DIR
 export EXPORT_ROOTFS_DIR
+export SKIP_IMAGE_LIST=" ${SKIP_IMAGE_LIST} "
 
 export QUILT_PATCHES
 export QUILT_NO_DIFF_INDEX=1
 export QUILT_NO_DIFF_TIMESTAMPS=1
 export QUILT_REFRESH_ARGS="-p ab"
+
+export USR_UART_CONSOLE
+export USR_USB_CONSOLE
+export USR_USB_MASS_STORAGE
+export USR_AUTOLOGIN
+export GIT_NAME
+export GIT_MAIL
 
 # shellcheck source=scripts/common
 source "${SCRIPT_DIR}/common"

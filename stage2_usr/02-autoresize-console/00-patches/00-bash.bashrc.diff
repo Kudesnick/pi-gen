@@ -1,0 +1,16 @@
+--- stage_usr.orig/rootfs/etc/bash.bashrc
++++ stage_usr/rootfs/etc/bash.bashrc
+@@ -56,3 +56,13 @@ if [ -x /usr/lib/command-not-found -o -x /usr/share/command-not-found/command-no
+ 		fi
+ 	}
+ fi
++
++# resize console according to window size
++#see https://unix.stackexchange.com/questions/16578/resizable-serial-console-window/283206#283206
++OLD_SETT=$(stty -g)
++stty raw -echo min 0 time 5
++printf '\0337\033[r\033[999;999H\033[6n\0338' > /dev/tty
++IFS='[;R' read -r _ REAL_ROWS REAL_COLS _ < /dev/tty
++stty ${OLD_SETT}
++stty cols "${REAL_COLS}" rows "${REAL_ROWS}"
++echo "resize to ${REAL_COLS} cols x ${REAL_ROWS} rows complete"
