@@ -74,7 +74,10 @@ EOF
 			popd > /dev/null
 			log "End ${SUB_STAGE_DIR}/${i}-patches"
 		fi
-		if [ -x ${i}-run.sh ]; then
+		if [ -f ${i}-run.sh ]; then
+		    if [ ! -x ${i}-run.sh ]; then
+				chmod a+x ${i}-run.sh
+			fi
 			log "Begin ${SUB_STAGE_DIR}/${i}-run.sh"
 			./${i}-run.sh
 			log "End ${SUB_STAGE_DIR}/${i}-run.sh"
@@ -121,7 +124,10 @@ run_stage(){
 				rm -rf "${ROOTFS_DIR}"
 			fi
 		fi
-		if [ -x prerun.sh ]; then
+		if [ -f prerun.sh ]; then
+			if [ ! -x prerun.sh ]; then
+				chmod a+x prerun.sh
+			fi
 			log "Begin ${STAGE_DIR}/prerun.sh"
 			./prerun.sh
 			log "End ${STAGE_DIR}/prerun.sh"
@@ -416,7 +422,10 @@ for EXPORT_DIR in ${EXPORT_DIRS}; do
 	fi
 done
 
-if [ -x postrun.sh ]; then
+if [ -f postrun.sh ]; then
+	if [ ! -x postrun.sh ]; then
+		chmod a+x postrun.sh
+	fi
 	log "Begin postrun.sh"
 	cd "${BASE_DIR}"
 	./postrun.sh
