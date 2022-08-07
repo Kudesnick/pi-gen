@@ -1,17 +1,11 @@
 #!/bin/bash -e
 
+source ../config-func.sh
+
 if [ $USR_UART_CONSOLE ]; then
-	sed -i "$ a # Enable hardware UART console" "${ROOTFS_DIR}/boot/config.txt"
-	sed -i "$ a enable_uart=1" "${ROOTFS_DIR}/boot/config.txt"
+	param_on "# Enable hardware UART console"
+	param_on "enable_uart=1"
 fi
-
-function param_on {
-	sed -i "s/#*$1/$1/" "${ROOTFS_DIR}/boot/config.txt"
-}
-
-function param_off {
-	sed -i "s/^$1/#$1/" "${ROOTFS_DIR}/boot/config.txt"
-}
 
 param_off "dtparam=audio=on"
 param_off "camera_auto_detect=1"
