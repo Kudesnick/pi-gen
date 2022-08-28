@@ -279,6 +279,7 @@ export USR_USB_MASS_STORAGE
 export USR_AUTOLOGIN
 export GIT_NAME
 export GIT_MAIL
+export LCD_HAT
 
 # shellcheck source=scripts/common
 source "${SCRIPT_DIR}/common"
