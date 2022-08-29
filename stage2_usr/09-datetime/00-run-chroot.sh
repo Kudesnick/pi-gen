@@ -1,4 +1,4 @@
 #!/bin/bash -e
 
 #time synchronization enabled (NTP)
-timedatectl set-ntp true
+systemctl enable systemd-timesyncd.service
