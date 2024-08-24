@@ -10,8 +10,7 @@ dtc -I dts -O dtb -o /boot/firmware/overlays/lcd_hat_keyboard.dtbo lcd_hat_keybo
 
 cd ../st7735r
 cp adafruit-st7735r.dtbo /boot/firmware/overlays/
-KERNEL_VER=$(ls -1 /usr/lib/modules/ | head -1)
-KERNELDIR=/usr/lib/modules/${KERNEL_VER}
+KERNELDIR=$(find /usr/lib/modules/*/kernel/ | head -1 | sed -e s:/kernel/::) # uname not work in chroot: https://unix.stackexchange.com/questions/302869/practical-use-of-uname-in-chroot
 make KERNELDIR=${KERNELDIR} && make KERNELDIR=${KERNELDIR} install && make KERNELDIR=${KERNELDIR} clean
 
 cd ../..
