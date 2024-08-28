@@ -6,10 +6,13 @@ if [ $WPA_ESSID ] && [ $WPA_PASSWORD ]; then
     WPA_LIST=("${WPA_ESSID}:${WPA_PASSWORD}")
 fi
 
+PRIORITY=0
+
 for WPA in "${WPA_LIST[@]}" ; do
 
 ESSID="${WPA%%:*}"
 PASSWORD="${WPA##*:}"
+((PRIORITY++))
 
 # nmcli dev wifi connect ${ESSID} password ${PASSWORD}
 # nmcli connection modify ${ESSID} connection.autoconnect yes
@@ -20,6 +23,7 @@ uuid=$(uuidgen)
 type=wifi
 interface-name=wlan0
 autoconnect=true
+autoconnect-priority=${PRIORITY}
 
 [wifi]
 mode=infrastructure
