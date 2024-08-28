@@ -3,11 +3,19 @@
 # see https://github.com/raspberrypi/bookworm-feedback/issues/72#issuecomment-1848778447
 
 if [ $WPA_ESSID ] && [ $WPA_PASSWORD ]; then
-# nmcli dev wifi connect ${WPA_ESSID} password ${WPA_PASSWORD}
-# nmcli connection modify ${WPA_ESSID} connection.autoconnect yes
-cat >${ROOTFS_DIR}/etc/NetworkManager/system-connections/${WPA_ESSID}.nmconnection <<EOF
+    WPA_LIST=("${WPA_ESSID}:${WPA_PASSWORD}")
+fi
+
+for WPA in "${WPA_LIST[@]}" ; do
+
+ESSID="${WPA%%:*}"
+PASSWORD="${WPA##*:}"
+
+# nmcli dev wifi connect ${ESSID} password ${PASSWORD}
+# nmcli connection modify ${ESSID} connection.autoconnect yes
+cat >${ROOTFS_DIR}/etc/NetworkManager/system-connections/${ESSID}.nmconnection <<EOF
 [connection]
-id=${WPA_ESSID}
+id=${ESSID}
 uuid=$(uuidgen)
 type=wifi
 interface-name=wlan0
@@ -15,12 +23,12 @@ autoconnect=true
 
 [wifi]
 mode=infrastructure
-ssid=${WPA_ESSID}
+ssid=${ESSID}
 
 [wifi-security]
 auth-alg=open
 key-mgmt=wpa-psk
-psk=$(wpa_passphrase ${WPA_ESSID} ${WPA_PASSWORD} | grep -E '[^#]psk=' | sed 's/.*psk=//')
+psk=$(wpa_passphrase ${ESSID} ${PASSWORD} | grep -E '[^#]psk=' | sed 's/.*psk=//')
 
 [ipv4]
 method=auto
@@ -33,6 +41,7 @@ method=auto
 EOF
 on_chroot << EOF
 	SUDO_USER="${FIRST_USER_NAME}"
-    chmod 600 /etc/NetworkManager/system-connections/${WPA_ESSID}.nmconnection
+    chmod 600 /etc/NetworkManager/system-connections/${ESSID}.nmconnection
 EOF
-fi
+
+done # WPA
