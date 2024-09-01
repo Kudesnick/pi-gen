@@ -8,10 +8,10 @@ fi
 
 PRIORITY=0
 
-for WPA in "${WPA_LIST[@]}" ; do
+for WPA in ${WPA_LIST}; do
 	ESSID="${WPA%%:*}"
 	PASSWORD="${WPA##*:}"
-	((PRIORITY++))
+	PRIORITY=$((PRIORITY + 1))
 	FILE_NAME="/etc/NetworkManager/system-connections/${ESSID}.nmconnection"
 
 	# nmcli dev wifi connect ${ESSID} password ${PASSWORD}
@@ -19,9 +19,9 @@ for WPA in "${WPA_LIST[@]}" ; do
 	# nmcli connection modify ${ESSID} connection.autoconnect-priority ${PRIORITY}
 
 	install -m 600 files/wifi.connection ${ROOTFS_DIR}${FILE_NAME}
-	sed -i "s/id=/id=${ESSID}/"
-	sed -i "s/uuid=/uuid=$(uuidgen)/"
-	sed -i "s/autoconnect-priority=/autoconnect-priority=${PRIORITY}/"
-	sed -i "s/ssid=/ssid=${ESSID}/"
-	sed -i "s:psk=:psk=$(wpa_passphrase ${ESSID} ${PASSWORD} | grep -E '[^#]psk=' | sed 's/.*psk=//'):"
+	sed -i "s/^id=/id=${ESSID}/" ${ROOTFS_DIR}${FILE_NAME}
+	sed -i "s/^uuid=/uuid=$(uuidgen)/" ${ROOTFS_DIR}${FILE_NAME}
+	sed -i "s/^autoconnect-priority=/autoconnect-priority=${PRIORITY}/" ${ROOTFS_DIR}${FILE_NAME}
+	sed -i "s/^ssid=/ssid=${ESSID}/" ${ROOTFS_DIR}${FILE_NAME}
+	sed -i "s:psk=:psk=$(wpa_passphrase ${ESSID} ${PASSWORD} | grep -E '[^#]psk=' | sed 's/.*psk=//'):" ${ROOTFS_DIR}${FILE_NAME}
 done # WPA
