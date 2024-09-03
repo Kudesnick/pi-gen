@@ -8,10 +8,10 @@
 git clone -b bullseye https://github.com/kudesnick/1.44inch-LCD-HAT-Code.git
 
 cd 1.44inch-LCD-HAT-Code/dto
-dtc -I dts -O dtb -o /boot/firmware/overlays/lcd_hat_keyboard.dtbo lcd_hat_keyboard-overlay.dts -W no-unit_address_vs_reg
+dtc -I dts -O dtb -o /boot/overlays/lcd_hat_keyboard.dtbo lcd_hat_keyboard-overlay.dts -W no-unit_address_vs_reg
 
 cd ../st7735r
-cp adafruit-st7735r.dtbo /boot/firmware/overlays/
+cp adafruit-st7735r.dtbo /boot/overlays/
 KRNL_DIR=$(find /usr/lib/modules/*/kernel/ | head -1 | sed -e s:/kernel/::) # uname not work in chroot: https://unix.stackexchange.com/questions/302869/practical-use-of-uname-in-chroot)
 make KERNELDIR=${KRNL_DIR} && make KERNELDIR=${KRNL_DIR} install && make KERNELDIR=${KRNL_DIR} clean
 
