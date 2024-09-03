@@ -1,5 +1,7 @@
 #!/bin/bash -e
 
+source ../config-func.sh
+
 if [ $USR_USB_CONSOLE ] && [ $USR_USB_MASS_STORAGE ]; then
 	USB_DEV="g_acm_ms"
 elif [ $USR_USB_CONSOLE ]; then
@@ -9,10 +11,11 @@ elif [ $USR_USB_MASS_STORAGE ]; then
 fi
 
 if [ $USB_DEV ]; then
-	sed -i "s/rootwait/rootwait modules-load=dwc2,${USB_DEV}/" "${ROOTFS_DIR}/boot/cmdline.txt"
-	sed -i "s/^otg_mode=1/#otg_mode=1/" "${ROOTFS_DIR}/boot/config.txt"
-	sed -i "$ a # Enable USB UART console or mass storage emulator" "${ROOTFS_DIR}/boot/config.txt"
-	sed -i "$ a dtoverlay=dwc2" "${ROOTFS_DIR}/boot/config.txt"
+	sed -i "$ a modules-load=dwc2,${USB_DEV}" "${ROOTFS_DIR}/boot/firmware/cmdline.txt"
+	sed -i ':a;N;$!ba;s/\n/ /g' "${ROOTFS_DIR}/boot/firmware/cmdline.txt"
+	param_off "otg_mode=1"
+	sed -i "$ a # Enable USB UART console or mass storage emulator or ethernet" "${CONF_PATH}"
+	sed -i "$ a dtoverlay=dwc2" "${CONF_PATH}"
 fi
 
 if [ $USR_USB_CONSOLE ]; then
