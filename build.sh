@@ -235,6 +235,7 @@ export DISABLE_FIRST_BOOT_USER_RENAME=${DISABLE_FIRST_BOOT_USER_RENAME:-0}
 export RELEASE=${RELEASE:-bullseye}
 export WPA_ESSID
 export WPA_PASSWORD
+export WPA_LIST
 export WPA_COUNTRY
 export ENABLE_SSH="${ENABLE_SSH:-0}"
 export PUBKEY_ONLY_SSH="${PUBKEY_ONLY_SSH:-0}"
@@ -280,6 +281,7 @@ export USR_AUTOLOGIN
 export GIT_NAME
 export GIT_MAIL
 export LCD_HAT
+export GIT_LIST
 
 # shellcheck source=scripts/common
 source "${SCRIPT_DIR}/common"
