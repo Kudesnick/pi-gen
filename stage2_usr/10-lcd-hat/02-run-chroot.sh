@@ -13,6 +13,8 @@ dtc -I dts -O dtb -o /boot/overlays/lcd_hat_keyboard.dtbo lcd_hat_keyboard-overl
 cd ../st7735r
 cp adafruit-st7735r.dtbo /boot/overlays/
 KRNL_DIR=$(find /usr/lib/modules/*/kernel/ | head -1 | sed -e s:/kernel/::) # uname not work in chroot: https://unix.stackexchange.com/questions/302869/practical-use-of-uname-in-chroot)
+KRNL_VERS=$(grep -oP '[0-9]+\.[0-9]+' <<< "${KRNL_DIR}")
+SOURCE="https://github.com/raspberrypi/linux/raw/rpi-${KRNL_VERS}.y/drivers/gpu/drm/tiny/st7735r.c"
 make KERNELDIR=${KRNL_DIR} && make KERNELDIR=${KRNL_DIR} install && make KERNELDIR=${KRNL_DIR} clean
 
 cd ../..
