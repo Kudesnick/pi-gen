@@ -11,8 +11,8 @@ elif [ $USR_USB_MASS_STORAGE ]; then
 fi
 
 if [ $USB_DEV ]; then
-	sed -i "$ a modules-load=dwc2,${USB_DEV}" "${ROOTFS_DIR}/boot/firmware/cmdline.txt"
-	sed -i ':a;N;$!ba;s/\n/ /g' "${ROOTFS_DIR}/boot/firmware/cmdline.txt"
+	sed -i "$ a modules-load=dwc2,${USB_DEV}" "${ROOTFS_DIR}/boot/cmdline.txt"
+	sed -i ':a;N;$!ba;s/\n/ /g' "${ROOTFS_DIR}/boot/cmdline.txt"
 	param_off "otg_mode=1"
 	sed -i "$ a # Enable USB UART console or mass storage emulator or ethernet" "${CONF_PATH}"
 	sed -i "$ a dtoverlay=dwc2" "${CONF_PATH}"
