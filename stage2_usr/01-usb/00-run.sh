@@ -24,6 +24,9 @@ if [ $USR_USB_CONSOLE ]; then
 	if [ ! -L ${SIM_LINK} ] ; then
 		ln -s /lib/systemd/system/getty@.service ${SIM_LINK}
 	fi
+	# patch https://github.com/raspberrypi/linux/issues/1929
+	# poweroff timeout fixed
+	sed -i --follow-symlinks "s/TTYVTDisallocate=yes/TTYVTDisallocate=no/" "${ROOTFS_DIR}/usr/lib/systemd/system/getty@.service"
 fi
 
 if [ $USR_USB_MASS_STORAGE ]; then
