@@ -3,6 +3,8 @@
 source ../config-func.sh
 
 if [ $LCD_HAT ]; then
+	tee -a "${ROOTFS_DIR}/home/${FIRST_USER_NAME}/.bashrc" < "files/.bashrc"
+
 	param_on "# lcd settings for ${LCD_HAT} CCW rotation"
 	param_on "dtparam=spi=on"
 	param_on "hdmi_ignore_hotplug=1"
