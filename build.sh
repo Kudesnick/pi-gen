@@ -281,6 +281,9 @@ export USR_AUTOLOGIN
 export GIT_NAME
 export GIT_MAIL
 export LCD_HAT
+export SHTDN
+export PWROFF
+export PWM
 export GIT_LIST
 
 # shellcheck source=scripts/common
