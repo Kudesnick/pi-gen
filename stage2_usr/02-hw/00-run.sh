@@ -27,7 +27,7 @@ fi
 
 if [ $PWROFF ]; then
 	param_on "# Poweroff output pulse (active_low=1 - negative pulse)"
-	param_on "dtoverlay=gpio-poweroff,gpiopin=${PWROFF},active_low=1"
+	param_on "dtoverlay=gpio-poweroff,gpiopin=${PWROFF},active_low=1,inactive_delay_ms=4000,active_delay_ms=50"
 fi
 
 if [ $PWM ]; then
