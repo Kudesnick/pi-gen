@@ -35,7 +35,7 @@ ln -fs "/var/run" "${ROOTFS_DIR}/var/lib/NetworkManager"
 
 ln -fs "/tmp/systemd-random-seed" "${ROOTFS_DIR}/var/lib/systemd/random-seed"
 
-sed -i '|[Service]|a ExecStartPre=/bin/echo "" >/tmp/systemd-random-seed' "${ROOTFS_DIR}/lib/systemd/system/systemd-random-seed.service"
+sed -i '\,[Service],a ExecStartPre=/bin/echo "" >/tmp/systemd-random-seed' "${ROOTFS_DIR}/lib/systemd/system/systemd-random-seed.service"
 
 # disable tasks
 
