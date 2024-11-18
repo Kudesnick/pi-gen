@@ -11,19 +11,9 @@ on_chroot <<- EOF
 EOF
 
 # timesyncd to ro-mode
-if [ "${RELEASE}" == "bullseye" ]; then
-	on_chroot <<- EOF
-		apt install ninja -y
-		tar -xf https://github.com/systemd/systemd/archive/v250.tar.gz
-		cd systemd-250
-		make
 
-		cd ..
-		rm -fr systemd-250
-	EOF
-fi
-
-sed -i "$ a SaveIntervalSec=infinity" "${ROOTFS_DIR}/etc/systemd/timesyncd.conf"
+rm -rf "${ROOTFS_DIR}/var/lib/systemd/timesync/clock"
+ln -fs "/tmp/clock" "${ROOTFS_DIR}/var/lib/systemd/timesync/clock"
 
 # Network manager to ro-mode
 
