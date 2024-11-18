@@ -1,0 +1,70 @@
+#!/bin/bash -e
+
+# nocheck SD-Card, not use swapfile, readonly mode
+sed -i --follow-symlinks "$ a fsck.mode=skip noswap ro" "${ROOTFS_DIR}/boot/cmdline.txt"
+sed -i --follow-symlinks ':a;N;$!ba;s/\n/ /g' "${ROOTFS_DIR}/boot/cmdline.txt"
+
+# remove unused packages
+on_chroot <<- EOF
+	apt remove wolfram-engine triggerhappy cron anacron logrotate dphys-swapfile xserver-common lightdm fake-hwclock -y
+	apt autoremove --purge
+EOF
+
+# timesyncd to ro-mode
+if [ "${RELEASE}" == "bullseye" ]; then
+	on_chroot <<- EOF
+		apt install ninja -y
+		tar -xf https://github.com/systemd/systemd/archive/v250.tar.gz
+		cd systemd-250
+		make
+
+		cd ..
+		rm -fr systemd-250
+	EOF
+fi
+
+sed -i "$ a SaveIntervalSec=infinity" "${ROOTFS_DIR}/etc/systemd/timesyncd.conf"
+
+# Network manager to ro-mode
+
+sed -i "/[main]/a rc-manager=file" "${ROOTFS_DIR}/etc/NetworkManager/NetworkManager.conf"
+
+# move files to tmpfs
+mv "${ROOTFS_DIR}/etc/resolv.conf" "${ROOTFS_DIR}/var/run/resolv.conf"
+ln -fs "/var/run/resolv.conf" "${ROOTFS_DIR}/etc/resolv.conf"
+rm -rf "${ROOTFS_DIR}/var/lib/dhcp"
+ln -fs "/var/run" "${ROOTFS_DIR}/var/lib/dhcp"
+rm -rf "${ROOTFS_DIR}/var/lib/NetworkManager"
+ln -fs "/var/run" "${ROOTFS_DIR}/var/lib/NetworkManager"
+
+# random-seed
+
+mv "${ROOTFS_DIR}/var/lib/systemd/random-seed" "${ROOTFS_DIR}/tmp/systemd-random-seed"
+ln -fs "/tmp/systemd-random-seed" "${ROOTFS_DIR}/var/lib/systemd/random-seed"
+
+sed -i '|[Service]|a ExecStartPre=/bin/echo "" >/tmp/systemd-random-seed' "${ROOTFS_DIR}/lib/systemd/system/systemd-random-seed.service"
+
+# disable tasks
+
+on_chroot <<- EOF
+	systemctl disable systemd-rfkill.service
+	systemctl mask systemd-rfkill.socket
+	systemctl mask man-db.timer
+	systemctl mask apt-daily.timer
+	systemctl mask apt-daily-upgrade.timer
+EOF
+
+# disable journald
+
+sed -i "s/#Storage=auto/Storage=none/" "${ROOTFS_DIR}/etc/systemd/journald.conf"
+
+# /etc/fstab
+
+sed -i "s/vfat    defaults,flush/vfat    defaults,ro/" "${ROOTFS_DIR}/etc/fstab"
+sed -i "s/ext4    defaults,noatime/ext4    defaults,noatime,ro/" "${ROOTFS_DIR}/etc/fstab"
+
+cat "files/fstab" >> "${ROOTFS_DIR}/etc/fstab"
+
+cat "files/.bashrc" >> "${ROOTFS_DIR}/etc/bash.bashrc"
+
+install -m 555 "files/bash.bash_logout" "${ROOTFS_DIR}/etc/bash.bash_logout"
