@@ -11,13 +11,13 @@ sed -i --follow-symlinks ':a;N;$!ba;s/\n/ /g' "${ROOTFS_DIR}/boot/cmdline.txt"
 # remove unused packages
 on_chroot <<- EOF
 	apt remove wolfram-engine triggerhappy cron anacron logrotate dphys-swapfile xserver-common lightdm fake-hwclock -y
-	apt autoremove --purge
+	apt autoremove --purge -y
 EOF
 
 # timesyncd to ro-mode
 
-rm -rf "${ROOTFS_DIR}/var/lib/systemd/timesync/clock"
-ln -fs "/tmp/clock" "${ROOTFS_DIR}/var/lib/systemd/timesync/clock"
+mkdir -p "${ROOTFS_DIR}/var/lib/systemd/timesync/"
+ln -fs "/tmp/systemd-timesync-clock" "${ROOTFS_DIR}/var/lib/systemd/timesync/clock"
 
 # Network manager to ro-mode
 
@@ -33,7 +33,6 @@ ln -fs "/var/run" "${ROOTFS_DIR}/var/lib/NetworkManager"
 
 # random-seed
 
-mv "${ROOTFS_DIR}/var/lib/systemd/random-seed" "${ROOTFS_DIR}/tmp/systemd-random-seed"
 ln -fs "/tmp/systemd-random-seed" "${ROOTFS_DIR}/var/lib/systemd/random-seed"
 
 sed -i '|[Service]|a ExecStartPre=/bin/echo "" >/tmp/systemd-random-seed' "${ROOTFS_DIR}/lib/systemd/system/systemd-random-seed.service"
