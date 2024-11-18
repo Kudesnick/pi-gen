@@ -1,5 +1,9 @@
 #!/bin/bash -e
 
+# see
+# https://www.dzombak.com/blog/2024/03/Running-a-Raspberry-Pi-with-a-read-only-root-filesystem.html
+# https://ktg0210.hashnode.dev/editing-etcsystemdsystemservicedoverrideconf-canceled-temporary-file-is-empty
+
 # nocheck SD-Card, not use swapfile, readonly mode
 sed -i --follow-symlinks "$ a fsck.mode=skip noswap ro" "${ROOTFS_DIR}/boot/cmdline.txt"
 sed -i --follow-symlinks ':a;N;$!ba;s/\n/ /g' "${ROOTFS_DIR}/boot/cmdline.txt"
