@@ -13,6 +13,7 @@ on_chroot <<- EOF
 	apt remove wolfram-engine triggerhappy cron anacron logrotate dphys-swapfile xserver-common lightdm fake-hwclock -y
 	apt autoremove --purge -y
 EOF
+rm -f "${ROOTFS_DIR}/etc/init.d/fake-hwclock"
 
 # timesyncd to ro-mode
 
